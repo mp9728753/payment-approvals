@@ -136,26 +136,28 @@ function renderResults() {
 }
 function initialWeek() {
   const current = monday(today());
-  const queue = items.filter(active).sort(byDue);
+  const queue = items.filter(i => active(i) || i.status === statuses[4]).sort(byDue);
   const next = queue.find(i => i.due >= current) || queue.at(-1);
   return next ? monday(next.due) : current;
 }
 function renderWeek() {
   const end = shift(week, 6);
-  const queue = items.filter(active);
-  const selected = queue.filter(i => i.due >= week && i.due <= end).sort(byDue);
+  const selected = items.filter(i => (active(i) || i.status === statuses[4])
+    && i.due >= week && i.due <= end).sort(byDue);
   const days = Map.groupBy(selected, i => i.due);
   const categories = Map.groupBy(selected, i => i.article);
   $('screen').innerHTML = `
-    <div class="heading"><div><h1>К оплате на неделю</h1><p class="muted">Согласованные заявки по сроку оплаты</p></div></div>
+    <div class="heading"><div><h1>К оплате на неделю</h1><p class="muted">Согласованные и оплаченные заявки по сроку оплаты</p></div></div>
     <div class="week-nav"><button id="prev">Прошлая неделя</button><strong>${date(week)} — ${date(end)}</strong><button id="next">Следующая неделя</button></div>
     <div class="week-grid">
       <section class="panel"><h2>По дням</h2>${[...days].map(([day, rows]) => `
         <h3 class="day">${new Intl.DateTimeFormat('ru-RU', {weekday:'long', day:'numeric', month:'long', timeZone:'UTC'}).format(new Date(day))}</h3>
-        ${rows.map(i => `<div class="line"><div>${viewButton(i,i.recipient)}<br><small>${escape(i.article)}${overdue(i) ? ' · Просрочено' : ''}</small></div><span class="money">${money(i.amount)}</span></div>`).join('')}
+        ${rows.map(i => `<div class="line"><div>${viewButton(i,i.recipient)}<br><small>${escape(i.article)}${overdue(i) ? ' · Просрочено' : ''}</small><br>${badge(i)}</div><span class="money">${money(i.amount)}</span></div>`).join('')}
         <div class="line"><small>Итого за день</small><strong class="money">${money(sum(rows))}</strong></div>`).join('') || '<p class="empty">На эту неделю платежей нет.</p>'}</section>
       <section class="panel"><h2>По статьям</h2>${[...categories].map(([name, rows]) => `<div class="line"><span>${escape(name)}</span><strong class="money">${money(sum(rows))}</strong></div>`).join('')}
-      <div class="line total"><span>Итого за неделю</span><strong class="money">${money(sum(selected))}</strong></div></section>
+      <div class="line total"><span>К оплате</span><strong class="money">${money(sum(selected.filter(active)))}</strong></div>
+      <div class="line"><span>Оплачено</span><strong class="money">${money(sum(selected.filter(i => i.status === statuses[4])))}</strong></div>
+      <div class="line"><span>Итого за неделю</span><strong class="money">${money(sum(selected))}</strong></div></section>
     </div>`;
   $('prev').onclick = () => { week = shift(week, -7); renderWeek(); $('prev').focus(); };
   $('next').onclick = () => { week = shift(week, 7); renderWeek(); $('next').focus(); };
