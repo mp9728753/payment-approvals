@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Согласование платежей</title>
+<style>
+:root{font-family:system-ui,sans-serif;color:#172a35;background:#f2f5f7;--ink:#17353d;--muted:#50636d;--line:#dce5e9;--accent:#096451}
+*{box-sizing:border-box}body{margin:0}button,input,select,textarea{font:inherit}button{cursor:pointer}button,input,select,textarea{border:1px solid #b9c9d0;border-radius:9px;padding:.65rem .85rem;background:white;color:inherit;min-height:44px}button:hover{background:#edf5f3}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #498cba;outline-offset:2px}button.primary,button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:white}
+.wrap{width:min(1260px,100%);margin:auto;padding:0 26px}.mast{background:#122f39;color:white}.mast .wrap{display:flex;align-items:center;justify-content:space-between;gap:18px;padding-block:20px;flex-wrap:wrap}.brand{display:flex;align-items:center;gap:12px;font-weight:750}.mark{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:#a8e7ce;color:#17353d;font-size:1.25rem}.roles,.tabs,.actions,.week-nav{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.roles button{background:#203f4a;color:white;border-color:#59737b}.roles button[aria-pressed=true]{background:#a8e7ce;color:#123c34;border-color:#a8e7ce}
+main.wrap{padding-block:30px 50px}.heading{display:flex;align-items:end;justify-content:space-between;gap:15px;flex-wrap:wrap;margin:20px 0}h1,h2,h3,p{margin-top:0}h1{font-size:clamp(1.65rem,4vw,2.5rem);letter-spacing:-.035em;margin-bottom:5px}h2{font-size:1.3rem}h3{font-size:1.05rem}.muted,small{color:var(--muted)}small{font-size:.875rem}.heading p{margin:0}.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:20px}.metric,.panel{background:white;border:1px solid var(--line);border-radius:15px}.metric{padding:16px}.metric strong{display:block;font-size:clamp(1.12rem,3vw,1.65rem);margin-top:5px}.panel{padding:18px}.filters{display:grid;grid-template-columns:1.15fr 1fr 1fr;gap:12px;margin-bottom:16px}label{display:grid;gap:5px;font-size:.875rem;font-weight:650}input,select,textarea{width:100%;min-width:0}.filter-count{margin-bottom:8px}.table-wrap{overflow-x:auto}table{border-collapse:collapse;width:100%;text-align:left}th,td{padding:12px 9px;border-bottom:1px solid var(--line);vertical-align:middle}th{background:#eef3f5;color:#344f5b;font-size:.875rem}tr:last-child td{border-bottom:0}.money,.due{white-space:nowrap}.money{font-weight:700}.badge{display:inline-block;padding:4px 9px;border-radius:20px;font-size:.875rem;font-weight:650;background:#edf1f4;color:#394d58}.s1{background:#fff0c8;color:#694900}.s2{background:#d9f3e8;color:#075744}.s3{background:#fce2e4;color:#862536}.s4{background:#e2ebfd;color:#254779}.late{color:#9b2839;font-weight:700}.link{border:0;background:transparent;color:#075e55;font-weight:700;padding-inline:4px;text-align:left}.cards{display:none}dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}dt{color:var(--muted);font-size:.875rem}dd{margin:3px 0 0;overflow-wrap:anywhere}.empty{padding:20px 0;margin:0;color:var(--muted)}.week-nav{justify-content:space-between;margin-bottom:16px}.week-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:14px;align-items:start}.line{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--line)}.day{margin:16px 0 5px}.total{font-weight:750;margin-top:12px}.callout{border-radius:10px;background:#edf6f2;padding:12px;margin-block:14px}.callout p{margin:5px 0}.warning{background:#fff0d5;color:#674305}.history{padding-left:22px}.history li{margin-bottom:10px}.history p{margin:4px 0;white-space:pre-wrap;overflow-wrap:anywhere}
+dialog{border:1px solid var(--line);border-radius:18px;width:min(650px,calc(100% - 24px));max-height:90dvh;padding:22px;color:inherit;box-shadow:0 18px 70px #102b4550}dialog::backdrop{background:#0b2639a0}.dialog-top{display:flex;justify-content:space-between;gap:10px;align-items:start}.dialog-top h2,.line>div,.card .link{min-width:0;overflow-wrap:anywhere}.close{flex:none}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.wide{grid-column:1/-1}textarea{resize:vertical}.actions{margin-top:14px}.feedback{margin:10px 0 0;color:#075e55;font-weight:650}.error{color:#9b2839}.decision-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+@media(max-width:760px){.wrap{padding-inline:15px}.mast .wrap{gap:12px;padding-block:14px}.roles{width:100%}.roles button{flex:1;padding-inline:6px;font-size:.875rem}.filters,.week-grid{grid-template-columns:1fr}.table-wrap{display:none}.cards{display:grid;gap:10px}.card{border:1px solid var(--line);border-radius:12px;padding:12px}.card .link{padding-inline:0;max-width:100%}.card dl{margin:8px 0 0}.panel{padding:12px}.metric{padding:9px}.metric small{font-size:.8125rem}.metrics{gap:6px}.week-nav strong{order:-1;width:100%}main.wrap{padding-top:16px}dialog{padding:14px}.form-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="mast"><div class="wrap"><div class="brand"><span class="mark" aria-hidden="true">₽</span>Согласование платежей</div><div class="roles" aria-label="Роль в демо"><button data-role="Сотрудник">Сотрудник</button><button data-role="Руководитель">Руководитель</button><button data-role="Бухгалтер">Бухгалтер</button></div></div></header>
+<main class="wrap"><nav class="tabs" aria-label="Разделы"><button id="list-tab">Заявки</button><button id="week-tab">К оплате на неделю</button></nav><div id="feedback" class="feedback" role="status"></div><div id="screen"></div><div class="actions"><button id="reset">Вернуть пример</button></div></main>
+<dialog id="dialog" aria-labelledby="dialog-title"><div id="dialog-content"></div></dialog>
+<script type="application/json" id="articles">[{"name":"Аренда офиса","limit":18000000,"approver":"Руководитель"},{"name":"Закупка товара","limit":90000000,"approver":"Руководитель"},{"name":"Маркетинг и реклама","limit":15000000,"approver":"Руководитель"},{"name":"Связь и интернет","limit":2500000,"approver":"Бухгалтер"},{"name":"Канцтовары и хозтовары","limit":2000000,"approver":"Бухгалтер"},{"name":"Логистика и доставка","limit":12000000,"approver":"Руководитель"},{"name":"Программы и подписки","limit":4000000,"approver":"Бухгалтер"},{"name":"Обучение сотрудников","limit":6000000,"approver":"Руководитель"}]</script>
+<script type="application/json" id="requests">[{"created":"2026-03-02","status":"Новая","comment":"","recipient":"ООО «Бумажный кит»","amount":840000,"employee":"Павел Котов","file":"счёт-201.pdf","article":"Канцтовары и хозтовары","due":"2026-03-09","id":"З-101"},{"created":"2026-03-03","status":"На согласовании","comment":"","recipient":"ООО «Северный пряник»","amount":24600000,"employee":"Марина Лебедева","file":"счёт-202.pdf","article":"Закупка товара","due":"2026-03-08","id":"З-102"},{"created":"2026-03-03","status":"На согласовании","comment":"","recipient":"ИП Ветров К. А.","amount":3850000,"employee":"Олег Захаров","file":"счёт-203.pdf","article":"Логистика и доставка","due":"2026-03-13","id":"З-103"},{"created":"2026-03-04","status":"Согласована","comment":"Ок, платим в срок","recipient":"ООО «Тихая гавань»","amount":16500000,"employee":"Анна Сидорова","file":"счёт-204.pdf","article":"Аренда офиса","due":"2026-03-07","id":"З-104"},{"created":"2026-03-04","status":"Согласована","comment":"Ок, платим в срок","recipient":"ООО «Зелёный квадрат»","amount":7200000,"employee":"Павел Котов","file":"счёт-205.pdf","article":"Маркетинг и реклама","due":"2026-03-07","id":"З-105"},{"created":"2026-03-05","status":"Оплачена","comment":"Оплачено платёжным поручением","recipient":"ООО «Сеть-Плюс Регион»","amount":980000,"employee":"Марина Лебедева","file":"счёт-206.pdf","article":"Связь и интернет","due":"2026-03-08","id":"З-106"},{"created":"2026-03-05","status":"Отклонена","comment":"Нет закрывающих документов за прошлый месяц","recipient":"ООО «Облачный счёт»","amount":1490000,"employee":"Олег Захаров","file":"счёт-207.pdf","article":"Программы и подписки","due":"2026-03-12","id":"З-107"},{"created":"2026-03-06","status":"Новая","comment":"","recipient":"ООО «Северный пряник»","amount":31850000,"employee":"Анна Сидорова","file":"счёт-208.pdf","article":"Закупка товара","due":"2026-03-09","id":"З-108"},{"created":"2026-03-06","status":"Новая","comment":"","recipient":"ИП Ветров К. А.","amount":2100000,"employee":"Павел Котов","file":"счёт-209.pdf","article":"Логистика и доставка","due":"2026-03-11","id":"З-109"},{"created":"2026-03-07","status":"На согласовании","comment":"","recipient":"ООО «Школа у озера»","amount":4500000,"employee":"Марина Лебедева","file":"счёт-210.pdf","article":"Обучение сотрудников","due":"2026-03-10","id":"З-110"},{"created":"2026-03-07","status":"На согласовании","comment":"","recipient":"ООО «Зелёный квадрат»","amount":3800000,"employee":"Олег Захаров","file":"счёт-211.pdf","article":"Маркетинг и реклама","due":"2026-03-10","id":"З-111"},{"created":"2026-03-08","status":"Согласована","comment":"Ок, платим в срок","recipient":"ООО «Соты-мебель»","amount":1670000,"employee":"Анна Сидорова","file":"счёт-212.pdf","article":"Канцтовары и хозтовары","due":"2026-03-18","id":"З-112"},{"created":"2026-03-08","status":"Согласована","comment":"Ок, платим в срок","recipient":"ООО «Облачный счёт»","amount":650000,"employee":"Павел Котов","file":"счёт-213.pdf","article":"Программы и подписки","due":"2026-03-18","id":"З-113"},{"created":"2026-03-09","status":"Оплачена","comment":"Оплачено платёжным поручением","recipient":"ООО «Лён и хлопок»","amount":12730000,"employee":"Марина Лебедева","file":"счёт-214.pdf","article":"Закупка товара","due":"2026-03-12","id":"З-114"}]</script>
+<script>
+
+'use strict';
+const $ = id => document.getElementById(id);
+const source = id => JSON.parse($(id).textContent);
+const articles = source('articles');
+const statuses = ['Новая', 'На согласовании', 'Согласована', 'Отклонена', 'Оплачена'];
+const storageKey = 'payment-approvals.demo.v1';
+const money = value => new Intl.NumberFormat('ru-RU', {maximumFractionDigits: 2}).format(value / 100) + ' ₽';
+const escape = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[char]);
+const pad = n => String(n).padStart(2, '0');
+const today = () => {
+  const now = new Date();
+  return [now.getFullYear(), pad(now.getMonth() + 1), pad(now.getDate())].join('-');
+};
+const dayMs = 86400000;
+const shift = (iso, days) => new Date(Date.parse(iso) + days * dayMs).toISOString().slice(0, 10);
+const date = iso => iso.split('-').reverse().join('.');
+const monday = iso => shift(iso, -((new Date(iso).getUTCDay() + 6) % 7));
+const active = item => item.status === statuses[2];
+const overdue = item => active(item) && item.due < today();
+const byDue = (a, b) => a.due.localeCompare(b.due) || a.id.localeCompare(b.id, 'ru', {numeric:true});
+const sum = items => items.reduce((total, item) => total + item.amount, 0);
+const event = (actor, action, comment = '', time = new Date().toISOString()) => ({actor, action, comment, time});
+function example() {
+  const rows = source('requests');
+  const latest = rows.map(row => row.created).sort().at(-1);
+  const days = (Date.parse(today()) - Date.parse(latest)) / dayMs;
+  return rows.map(row => {
+    const item = {...row, created: shift(row.created, days), due: shift(row.due, days)};
+    const history = [event(item.employee, 'Создал заявку', '', item.created)];
+    if (item.status !== statuses[0]) history.push(event(item.employee, 'Отправил на согласование', '', item.created));
+    if (active(item) || item.status === statuses[4]) {
+      history.push(event('Руководитель', 'Согласовал заявку', active(item) ? item.comment : '', item.created));
+    }
+    if (item.status === statuses[3]) history.push(event('Руководитель', 'Отклонил заявку', item.comment, item.created));
+    if (item.status === statuses[4]) history.push(event('Бухгалтер', 'Отметил оплату', item.comment, item.due < today() ? item.due : today()));
+    return {...item, comment: item.status === statuses[0] || item.status === statuses[1] ? item.comment : '', history};
+  });
+}
+let items;
+let role = 'Сотрудник';
+let screen = 'list';
+let week = '';
+let filters = {status:'', article:'', search:''};
+function notify(message, error = false) {
+  $('feedback').textContent = message;
+  $('feedback').classList.toggle('error', error);
+}
+function save(next) {
+  try {
+    localStorage.setItem(storageKey, JSON.stringify(next));
+    items = next;
+    return true;
+  } catch {
+    const error = 'Не удалось сохранить данные в браузере.';
+    notify(error, true);
+    if ($('dialog').open) $('dialog-error').textContent = error;
+    return false;
+  }
+}
+try {
+  items = JSON.parse(localStorage.getItem(storageKey));
+} catch {
+  items = null;
+}
+if (!Array.isArray(items)) {
+  items = example();
+  save(items);
+}
+const articleOptions = () => articles.map(a => '<option>' + escape(a.name) + '</option>').join('');
+const badge = item => '<span class="badge s' + statuses.indexOf(item.status) + '">' + item.status + '</span>';
+const viewButton = (item, label) => '<button type="button" class="link" data-open="' + escape(item.id) + '">' + escape(label) + '</button>';
+const dueText = item => '<span class="due' + (overdue(item) ? ' late' : '') + '">' + date(item.due) + '</span>' + (overdue(item) ? '<br><small class="late">Просрочено</small>' : '');
+const metric = (label, value) => '<div class="metric"><small>' + label + '</small><strong>' + value + '</strong></div>';
+function renderList() {
+  const ready = items.filter(active);
+  const metrics = metric('На согласовании', items.filter(i => i.status === statuses[1]).length)
+    + metric('Готово к оплате', money(sum(ready)))
+    + metric('Просрочено к оплате', money(sum(ready.filter(overdue))));
+  $('screen').innerHTML = `
+    <div class="heading"><div><h1>Заявки на оплату</h1><p class="muted">${role === 'Бухгалтер' ? 'Согласованные заявки первыми, в порядке срока оплаты.' : role === 'Руководитель' ? 'Откройте заявку, чтобы проверить лимит и принять решение.' : 'Создавайте заявки и отправляйте их на согласование.'}</p></div>${role === 'Сотрудник' ? '<button class="primary" id="new">Новая заявка</button>' : ''}</div>
+    <section class="metrics" aria-label="Состояние заявок">${metrics}</section>
+    <section class="panel"><div class="filters">
+      <label>Получатель<input id="search" type="search" placeholder="Поиск по названию"></label>
+      <label>Статус<select id="status"><option value="">Все статусы</option>${statuses.map(s => '<option>' + s + '</option>').join('')}</select></label>
+      <label>Статья<select id="article"><option value="">Все статьи</option>${articleOptions()}</select></label>
+    </div><div id="results"></div></section>`;
+  for (const key of Object.keys(filters)) {
+    $(key).value = filters[key];
+    $(key).addEventListener('input', e => {
+      filters[key] = e.target.value;
+      renderResults();
+    });
+  }
+  $('new')?.addEventListener('click', createDialog);
+  renderResults();
+}
+function renderResults() {
+  const result = items.filter(i => (!filters.status || i.status === filters.status)
+    && (!filters.article || i.article === filters.article)
+    && i.recipient.toLocaleLowerCase('ru').includes(filters.search.trim().toLocaleLowerCase('ru')));
+  result.sort((a, b) => role === 'Бухгалтер'
+    ? Number(active(b)) - Number(active(a)) || byDue(a, b)
+    : b.created.localeCompare(a.created) || b.id.localeCompare(a.id, 'ru', {numeric:true}));
+  if (!result.length) {
+    $('results').innerHTML = '<p class="empty">Заявок по этим условиям нет.</p>';
+    return;
+  }
+  $('results').innerHTML = `<div class="filter-count"><small>Найдено: ${result.length}</small></div>
+    <div class="table-wrap"><table aria-label="Заявки на оплату"><thead><tr><th>Заявка</th><th>Получатель</th><th>Статья</th><th>Сумма</th><th>Срок оплаты</th><th>Статус</th></tr></thead><tbody>
+    ${result.map(i => `<tr><td>${viewButton(i, i.id)}</td><td>${escape(i.recipient)}</td><td>${escape(i.article)}</td><td class="money">${money(i.amount)}</td><td>${dueText(i)}</td><td>${badge(i)}</td></tr>`).join('')}
+    </tbody></table></div><div class="cards">
+    ${result.map(i => `<article class="card"><div class="line"><small>${escape(i.id)}</small>${badge(i)}</div>${viewButton(i,i.recipient)}<div class="muted">${escape(i.article)}</div><dl><div><dt>Сумма</dt><dd class="money">${money(i.amount)}</dd></div><div><dt>Срок оплаты</dt><dd>${dueText(i)}</dd></div></dl></article>`).join('')}</div>`;
+}
+function initialWeek() {
+  const current = monday(today());
+  const queue = items.filter(active).sort(byDue);
+  const next = queue.find(i => i.due >= current) || queue.at(-1);
+  return next ? monday(next.due) : current;
+}
+function renderWeek() {
+  const end = shift(week, 6);
+  const queue = items.filter(active);
+  const selected = queue.filter(i => i.due >= week && i.due <= end).sort(byDue);
+  const days = Map.groupBy(selected, i => i.due);
+  const categories = Map.groupBy(selected, i => i.article);
+  $('screen').innerHTML = `
+    <div class="heading"><div><h1>К оплате на неделю</h1><p class="muted">Согласованные заявки по сроку оплаты</p></div></div>
+    <div class="week-nav"><button id="prev">Прошлая неделя</button><strong>${date(week)} — ${date(end)}</strong><button id="next">Следующая неделя</button></div>
+    <div class="week-grid">
+      <section class="panel"><h2>По дням</h2>${[...days].map(([day, rows]) => `
+        <h3 class="day">${new Intl.DateTimeFormat('ru-RU', {weekday:'long', day:'numeric', month:'long', timeZone:'UTC'}).format(new Date(day))}</h3>
+        ${rows.map(i => `<div class="line"><div>${viewButton(i,i.recipient)}<br><small>${escape(i.article)}${overdue(i) ? ' · Просрочено' : ''}</small></div><span class="money">${money(i.amount)}</span></div>`).join('')}
+        <div class="line"><small>Итого за день</small><strong class="money">${money(sum(rows))}</strong></div>`).join('') || '<p class="empty">На эту неделю платежей нет.</p>'}</section>
+      <section class="panel"><h2>По статьям</h2>${[...categories].map(([name, rows]) => `<div class="line"><span>${escape(name)}</span><strong class="money">${money(sum(rows))}</strong></div>`).join('')}
+      <div class="line total"><span>Итого за неделю</span><strong class="money">${money(sum(selected))}</strong></div></section>
+    </div>`;
+  $('prev').onclick = () => { week = shift(week, -7); renderWeek(); $('prev').focus(); };
+  $('next').onclick = () => { week = shift(week, 7); renderWeek(); $('next').focus(); };
+}
+function render() {
+  document.querySelectorAll('[data-role]').forEach(button => button.setAttribute('aria-pressed', button.dataset.role === role));
+  $('list-tab').setAttribute('aria-pressed', screen === 'list');
+  $('week-tab').setAttribute('aria-pressed', screen === 'week');
+  if (screen === 'list') renderList();
+  else renderWeek();
+}
+function openDialog(title, content) {
+  $('dialog-content').innerHTML = `<div class="dialog-top"><h2 id="dialog-title">${escape(title)}</h2><button class="close" id="close" type="button">Закрыть</button></div>${content}<p id="dialog-error" class="feedback error" role="alert"></p>`;
+  $('close').onclick = () => $('dialog').close();
+  if (!$('dialog').open) $('dialog').showModal();
+}
+function createDialog() {
+  openDialog('Новая заявка', `<form id="create-form"><div class="form-grid">
+    <label class="wide">Получатель<input name="recipient" required maxlength="120" autofocus></label>
+    <label>Сумма, ₽<input name="amount" type="number" inputmode="decimal" min="0.01" max="9999999999" step="0.01" required></label>
+    <label>Срок оплаты<input name="due" type="date" value="${today()}" required></label>
+    <label class="wide">Статья<select name="article" required><option value="">Выберите статью</option>${articleOptions()}</select></label>
+    <label class="wide">Имя файла счёта<input name="file" required maxlength="150" placeholder="счёт.pdf"></label>
+    <label class="wide">Комментарий<textarea name="comment" rows="2" maxlength="2000"></textarea></label>
+  </div><div class="actions"><button class="primary">Создать заявку</button></div></form>`);
+  $('create-form').onsubmit = e => {
+    e.preventDefault();
+    const data = new FormData(e.currentTarget);
+    const get = key => data.get(key).trim();
+    if (!get('recipient') || !get('file')) {
+      $('dialog-error').textContent = 'Укажите получателя и имя файла счёта.';
+      return;
+    }
+    const number = Math.max(100, ...items.map(i => Number(i.id.split('-').at(-1)))) + 1;
+    const item = {
+      id: 'З-' + number, created: today(), employee: role, recipient: get('recipient'),
+      amount: Math.round(Number(get('amount')) * 100), article: get('article'), due: get('due'),
+      file: get('file'), comment: get('comment'), status: statuses[0], history: [event(role, 'Создал заявку')]
+    };
+    if (save([...items, item])) {
+      filters = {status:'', article:'', search:''};
+      render();
+      notify('Заявка ' + item.id + ' создана.');
+      detail(item);
+      $('close').focus();
+    }
+  };
+}
+const field = (name,value) => '<div><dt>' + name + '</dt><dd>' + escape(value) + '</dd></div>';
+function detail(item) {
+  const pending = item.status === statuses[1];
+  const control = role === 'Сотрудник' && item.status === statuses[0]
+    ? '<button class="primary" id="submit-request">Отправить на согласование</button>'
+    : role === 'Руководитель' && pending
+      ? '<form id="decision"><label>Комментарий к решению<textarea name="comment" required maxlength="2000" rows="2"></textarea></label><div class="decision-actions"><button class="primary" value="approve">Согласовать</button><button value="reject">Отклонить</button></div></form>'
+      : role === 'Бухгалтер' && active(item) ? '<button class="primary" id="pay">Оплачено</button>' : '';
+  const limit = articles.find(a => a.name === item.article).limit;
+  const month = item.created.slice(0, 7);
+  const used = sum(items.filter(i => i.article === item.article && i.created.startsWith(month)
+    && (active(i) || i.status === statuses[4])));
+  const remaining = limit - used;
+  const warn = pending && item.amount > remaining;
+  const monthName = new Intl.DateTimeFormat('ru-RU', {month:'long', year:'numeric', timeZone:'UTC'}).format(new Date(month + '-01'));
+  openDialog(item.id + ' · ' + item.recipient, `
+    ${badge(item)}<dl>${field('Сумма',money(item.amount))}${field('Статья',item.article)}
+      ${field('Дата заявки',date(item.created))}<div><dt>Срок оплаты</dt><dd>${dueText(item)}</dd></div>
+      ${field('Сотрудник',item.employee)}${field('Файл счёта', item.file)}${item.comment ? '<div class="wide"><dt>Комментарий сотрудника</dt><dd>' + escape(item.comment) + '</dd></div>' : ''}</dl>
+    ${role === 'Руководитель' ? `<section class="callout ${warn ? 'warning' : ''}"><strong>Лимит за ${monthName}</strong><p>Осталось <strong>${money(remaining)}</strong> из ${money(limit)}</p>${warn ? '<p>Заявка превышает остаток на ' + money(item.amount - remaining) + '. Согласование доступно.</p>' : ''}</section>` : ''}
+    ${control}<h3 class="day">История заявки</h3><ol class="history">${item.history.map(entry => {
+      const stamp = entry.time.length === 10 ? date(entry.time) : new Date(entry.time).toLocaleString('ru-RU', {dateStyle:'short',timeStyle:'short'});
+      return `<li><strong>${escape(entry.action)}</strong><br><small>${escape(entry.actor)} · ${stamp}</small>${entry.comment ? '<p>' + escape(entry.comment) + '</p>' : ''}</li>`;
+    }).join('')}</ol>`);
+  function transition(status, action, comment) {
+    const changed = {...item, status, history: [...item.history, event(role, action, comment)]};
+    if (save(items.map(i => i.id === item.id ? changed : i))) {
+      render();
+      notify(item.id + ' · ' + status);
+      detail(changed);
+      $('close').focus();
+    }
+  }
+  if ($('submit-request')) $('submit-request').onclick = () => transition(statuses[1], 'Отправил на согласование');
+  if ($('pay')) $('pay').onclick = () => transition(statuses[4], 'Отметил оплату');
+  if ($('decision')) $('decision').onsubmit = e => {
+    e.preventDefault();
+    const comment = new FormData(e.currentTarget).get('comment').trim();
+    if (!comment) {
+      $('dialog-error').textContent = 'Добавьте комментарий к решению.';
+      return;
+    }
+    if (e.submitter.value === 'reject') transition(statuses[3], 'Отклонил заявку', comment);
+    else transition(statuses[2], 'Согласовал заявку', comment);
+  };
+}
+document.querySelectorAll('[data-role]').forEach(button => button.onclick = () => {
+  role = button.dataset.role;
+  notify('');
+  render();
+});
+$('list-tab').onclick = () => { screen = 'list'; notify(''); render(); };
+$('week-tab').onclick = () => { screen = 'week'; week = initialWeek(); notify(''); render(); };
+$('screen').addEventListener('click', e => {
+  const button = e.target.closest('[data-open]');
+  if (button) detail(items.find(i => i.id === button.dataset.open));
+});
+$('reset').onclick = () => {
+  openDialog('Вернуть пример?', '<p>Текущие заявки и история решений будут заменены исходными примерами.</p><button class="primary" id="confirm-reset">Вернуть пример</button>');
+  $('confirm-reset').onclick = () => {
+    if (!save(example())) return;
+    filters = {status:'', article:'', search:''};
+    week = initialWeek();
+    $('dialog').close();
+    notify('Пример восстановлен.');
+    render();
+  };
+};
+render();
+
+</script>
+</body>
+</html>
+
+
